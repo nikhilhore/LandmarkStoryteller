@@ -20,8 +20,20 @@ struct ContentView: View {
             NavigationView {
                 List {
                     ForEach(landmarks) { landmark in
-                        Text(landmark.name)
+                        NavigationLink(
+                            destination: LandmarkDetailView(landmark: landmark)
+                        ) {
+                            VStack(alignment: .leading) {
+                                Text(landmark.name)
+                                    .font(.headline)
+                                Text(landmark.details)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                                    .lineLimit(1)
+                            }
+                        }
                     }
+                    .onDelete(perform: deleteLandmarks)
                 }
                 .navigationTitle("Landmarks")
                 .toolbar {
@@ -32,6 +44,9 @@ struct ContentView: View {
                             Label("Add Landmark", systemImage: "plus")
                         }
                     }
+                    ToolbarItem(placement: .topBarLeading) {
+                        EditButton()
+                    }
                 }
                 .sheet(isPresented: $isAddingLandmark) {
                     AddLandmarkView()
@@ -40,6 +55,13 @@ struct ContentView: View {
             }
         }
         .padding()
+    }
+
+    private func deleteLandmarks(offsets: IndexSet) {
+        for index in offsets {
+            let landmark = landmarks[index]
+            modelContext.delete(landmark)
+        }
     }
 }
 

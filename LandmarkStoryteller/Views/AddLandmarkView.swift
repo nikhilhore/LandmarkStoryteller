@@ -17,24 +17,6 @@ struct AddLandmarkView: View {
     @State private var longitude: String = ""
     @State private var details: String = ""
 
-    func saveAction() {
-        guard let lat = Double(latitude),
-            let long = Double(longitude)
-        else {
-            print("Invalid coordinates")
-            return
-        }
-
-        let newLandmark = Landmark(
-            name: name,
-            latitude: lat,
-            longitude: long,
-            details: details
-        )
-        modelContext.insert(newLandmark)
-        dismiss()
-    }
-
     var body: some View {
         NavigationView {
             Form {
@@ -51,7 +33,7 @@ struct AddLandmarkView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { saveAction() }
+                    Button("Save") { saveLandmark() }
                         .disabled(
                             name.isEmpty || latitude.isEmpty
                                 || longitude.isEmpty
@@ -60,4 +42,27 @@ struct AddLandmarkView: View {
             }
         }
     }
+
+    private func saveLandmark() {
+        guard let lat = Double(latitude),
+            let long = Double(longitude)
+        else {
+            print("Invalid coordinates")
+            return
+        }
+
+        let newLandmark = Landmark(
+            name: name,
+            latitude: lat,
+            longitude: long,
+            details: details
+        )
+        modelContext.insert(newLandmark)
+        dismiss()
+    }
+}
+
+#Preview {
+    AddLandmarkView()
+        .modelContainer(for: Landmark.self, inMemory: true)
 }
