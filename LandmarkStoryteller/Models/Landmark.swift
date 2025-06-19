@@ -13,20 +13,20 @@ final class Landmark {
     var name: String
     var latitude: Double
     var longitude: Double
-    var details: String
+    var description_: String
     var foundingDate: Date?  // Optional, for historical context
 
     init(
         name: String,
         latitude: Double,
         longitude: Double,
-        details: String,
+        description: String,
         foundingDate: Date? = nil
     ) {
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
-        self.details = details
+        self.description_ = description
         self.foundingDate = foundingDate
     }
 }

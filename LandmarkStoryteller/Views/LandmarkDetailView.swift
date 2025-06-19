@@ -39,7 +39,7 @@ struct LandmarkDetailView: View {
                 Text(landmark.name)
                     .font(.largeTitle)
                     .fontWeight(.bold)
-                    .padding(.bottom, 5)
+                    .padding(.bottom, 8)
 
                 // Optional: Display founding date if available
                 if let foundingDate = landmark.foundingDate {
@@ -53,9 +53,9 @@ struct LandmarkDetailView: View {
                 Divider()
                 Text("Description:")
                     .font(.headline)
-                Text(landmark.details)
+                Text(landmark.description_)
                     .font(.body)
-                    .padding(.bottom, 10)
+                    .padding(.bottom, 8)
                 Divider()
                 Text("Location:")
                     .font(.headline)
@@ -75,8 +75,6 @@ struct LandmarkDetailView: View {
             }
             .padding()
         }
-        .navigationTitle(landmark.name)
-        .navigationBarTitleDisplayMode(.inline)  // Keep title compact
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink {
@@ -87,15 +85,6 @@ struct LandmarkDetailView: View {
             }
         }
     }
-}
-
-// Extension for DateFormatter to display only year
-extension DateFormatter {
-    static let yearOnly: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy"
-        return formatter
-    }()
 }
 
 #Preview {

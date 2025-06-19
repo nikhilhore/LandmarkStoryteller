@@ -15,19 +15,32 @@ struct AddLandmarkView: View {
     @State private var name: String = ""
     @State private var latitude: String = ""
     @State private var longitude: String = ""
-    @State private var details: String = ""
+    @State private var description: String = ""
 
     var body: some View {
         NavigationView {
             Form {
-                TextField("Name", text: $name)
-                TextField("Latitude", text: $latitude)
-                    .keyboardType(.decimalPad)
-                TextField("Longitude", text: $longitude)
-                    .keyboardType(.decimalPad)
-                TextField("Details", text: $details)
+                LabeledContent("Name") {
+                    TextField("Landmark Name", text: $name)
+                }
+                .labeledContentStyle(.topAligned)
+                LabeledContent("Location") {
+                    TextField("Latitude", text: $latitude)
+                        .keyboardType(.decimalPad)
+                    TextField("Longitude", text: $longitude)
+                        .keyboardType(.decimalPad)
+                }
+                .labeledContentStyle(.topAligned)
+                LabeledContent("Description") {
+                    TextEditor(text: $description)
+                        .frame(minHeight: 100)  // Give more room for description
+                        .border(Color.secondary.opacity(0.2))
+                        .padding(.bottom, 8)
+                }
+                .labeledContentStyle(.topAligned)
             }
             .navigationTitle("New Landmark")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
@@ -55,7 +68,7 @@ struct AddLandmarkView: View {
             name: name,
             latitude: lat,
             longitude: long,
-            details: details
+            description: description
         )
         modelContext.insert(newLandmark)
         dismiss()

@@ -17,7 +17,7 @@ struct EditLandmarkView: View {
     @State private var name: String
     @State private var latitude: String
     @State private var longitude: String
-    @State private var details: String
+    @State private var description: String
     @State private var foundingDate: Date
 
     init(landmark: Landmark) {
@@ -25,40 +25,52 @@ struct EditLandmarkView: View {
         _name = State(initialValue: landmark.name)
         _latitude = State(initialValue: String(landmark.latitude))
         _longitude = State(initialValue: String(landmark.longitude))
-        _details = State(initialValue: landmark.details)
+        _description = State(initialValue: landmark.description_)
         _foundingDate = State(initialValue: landmark.foundingDate ?? Date())
     }
 
     var body: some View {
         NavigationView {
             Form {
-                TextField("Name", text: $name)
-                TextField("Latitude", text: $latitude)
-                    .keyboardType(.decimalPad)
-                TextField("Longitude", text: $longitude)
-                    .keyboardType(.decimalPad)
-                TextEditor(text: $details)
-                    .frame(minHeight: 100)  // Give more room for description
-                DatePicker(
-                    "Founding Date (Optional)",
-                    selection: $foundingDate,
-                    displayedComponents: .date
-                )
-                .datePickerStyle(.compact)
-                .padding(.vertical, 5)
+                LabeledContent("Name") {
+                    TextField("Landmark Name", text: $name)
+                }
+                .labeledContentStyle(.topAligned)
+                LabeledContent("Location") {
+                    TextField("Latitude", text: $latitude)
+                        .keyboardType(.decimalPad)
+                    TextField("Longitude", text: $longitude)
+                        .keyboardType(.decimalPad)
+                }
+                .labeledContentStyle(.topAligned)
+                LabeledContent("Description") {
+                    TextEditor(text: $description)
+                        .frame(minHeight: 100)  // Give more room for description
+                        .border(Color.secondary.opacity(0.2))
+                        .padding(.bottom, 8)
+                }
+                .labeledContentStyle(.topAligned)
+                LabeledContent("Founding Date (Optional)") {
+                    DatePicker(
+                        "",
+                        selection: $foundingDate,
+                        displayedComponents: .date
+                    )
+                    .datePickerStyle(.compact)
+                    .padding(.vertical, 4)
+                    .labelsHidden()
+                }
+                .labeledContentStyle(.leading)
             }
         }
         .navigationTitle("Edit Landmark")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
-            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") { saveLandmark() }
                     .disabled(
                         name.isEmpty || latitude.isEmpty || longitude.isEmpty
-                            || details.isEmpty
+                            || description.isEmpty
                     )
             }
         }
@@ -72,7 +84,7 @@ struct EditLandmarkView: View {
             landmark.longitude = long
         }
 
-        landmark.details = details
+        landmark.description_ = description
         landmark.foundingDate = foundingDate
 
         // SwiftData automatically saves changes to @Bindable objects

@@ -26,9 +26,9 @@ struct ContentView: View {
                             VStack(alignment: .leading) {
                                 Text(landmark.name)
                                     .font(.headline)
-                                Text(landmark.details)
+                                Text(landmark.description_)
                                     .font(.subheadline)
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(.gray)
                                     .lineLimit(1)
                             }
                         }
@@ -54,7 +54,6 @@ struct ContentView: View {
                 }
             }
         }
-        .padding()
     }
 
     private func deleteLandmarks(offsets: IndexSet) {
