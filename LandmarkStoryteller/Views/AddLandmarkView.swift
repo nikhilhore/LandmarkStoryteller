@@ -63,6 +63,8 @@ struct AddLandmarkView: View {
 }
 
 #Preview {
-    AddLandmarkView()
-        .modelContainer(for: Landmark.self, inMemory: true)
+    NavigationView {
+        AddLandmarkView()
+    }
+    .modelContainer(for: Landmark.self, inMemory: true)
 }

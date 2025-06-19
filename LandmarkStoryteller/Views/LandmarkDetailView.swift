@@ -5,11 +5,33 @@
 //  Created by Nikhil Hore on 19/06/25.
 //
 
+import MapKit
 import SwiftData
 import SwiftUI
 
 struct LandmarkDetailView: View {
     let landmark: Landmark  // This view receives a Landmark object
+    private let landmarkCoordinates: CLLocationCoordinate2D
+
+    @State private var position: MapCameraPosition
+
+    init(landmark: Landmark) {
+        self.landmark = landmark
+        self.landmarkCoordinates = CLLocationCoordinate2D(
+            latitude: landmark.latitude,
+            longitude: landmark.longitude
+        )
+
+        // Initialize the camera position based on the landmark's coordinates
+        _position = State(
+            initialValue: .camera(
+                MapCamera(
+                    centerCoordinate: landmarkCoordinates,
+                    distance: 1000  // Zoom level in meters
+                )
+            )
+        )
+    }
 
     var body: some View {
         ScrollView {
@@ -43,20 +65,27 @@ struct LandmarkDetailView: View {
                 Text(
                     "Longitude: \(landmark.longitude, format: .number.precision(.fractionLength(4)))"
                 )
-
-                // Placeholder for a Map
-                Rectangle()
-                    .fill(Color.secondary.opacity(0.2))
-                    .frame(height: 200)
-                    .overlay(Text("Map Placeholder"))
-                    .cornerRadius(10)
-                    .padding(.vertical)
+                Map(position: $position) {
+                    Marker(landmark.name, coordinate: landmarkCoordinates)
+                }
+                .frame(height: 250)
+                .cornerRadius(10)
+                .padding(.vertical)
                 Spacer()
             }
             .padding()
         }
         .navigationTitle(landmark.name)
         .navigationBarTitleDisplayMode(.inline)  // Keep title compact
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink {
+                    EditLandmarkView(landmark: landmark)
+                } label: {
+                    Text("Edit")
+                }
+            }
+        }
     }
 }
 
@@ -70,18 +99,8 @@ extension DateFormatter {
 }
 
 #Preview {
-    let mockLandmark = Landmark(
-        name: "Gateway of India",
-        latitude: 18.9219,
-        longitude: 72.8347,
-        details:
-            "An iconic arch monument built during the British Raj in Mumbai, India. It was erected to commemorate the landing of King-Emperor George V and Queen-Empress Mary at Apollo Bunder during their visit to India in 1911.",
-        foundingDate: Calendar.current.date(
-            from: DateComponents(year: 1924, month: 12, day: 2)
-        )
-    )
-
-    return NavigationView {  // Wrap in NavigationView for preview to show title
-        LandmarkDetailView(landmark: mockLandmark)
+    NavigationView {  // Wrap in NavigationView for preview to show title
+        LandmarkDetailView(landmark: MockData.mockLandmark)
     }
+    .modelContainer(for: Landmark.self, inMemory: true)
 }
