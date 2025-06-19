@@ -13,7 +13,10 @@ struct LandmarkDetailView: View {
     let landmark: Landmark  // This view receives a Landmark object
     private let landmarkCoordinates: CLLocationCoordinate2D
 
+    @Environment(\.modelContext) private var modelContext
+
     @State private var position: MapCameraPosition
+    @State private var isAddingStory: Bool = false
 
     init(landmark: Landmark) {
         self.landmark = landmark
@@ -71,6 +74,19 @@ struct LandmarkDetailView: View {
                 .frame(height: 250)
                 .cornerRadius(10)
                 .padding(.vertical)
+                Divider()
+
+                // Mark: - User Stories section
+                HStack {
+                    Text("User Stories")
+                        .font(.headline)
+                    Spacer()
+                    Button("Add Story") {
+                        isAddingStory = true
+                    }
+                }
+                .padding(.bottom, 8)
+                UserStoriesView(landmark: landmark)
                 Spacer()
             }
             .padding()
@@ -84,12 +100,19 @@ struct LandmarkDetailView: View {
                 }
             }
         }
+        .sheet(isPresented: $isAddingStory) {
+            AddUserStoryView(for: landmark)
+                .modelContext(modelContext)
+        }
     }
 }
 
 #Preview {
-    NavigationView {  // Wrap in NavigationView for preview to show title
-        LandmarkDetailView(landmark: MockData.mockLandmark)
+    let landmark = MockData.mockLandmark
+    landmark.userStories?.append(contentsOf: MockData.mockUserStories)
+
+    return NavigationView {  // Wrap in NavigationView for preview to show title
+        LandmarkDetailView(landmark: landmark)
     }
-    .modelContainer(for: Landmark.self, inMemory: true)
+    .modelContainer(for: [Landmark.self, UserStory.self], inMemory: true)
 }
