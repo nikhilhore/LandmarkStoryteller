@@ -5,7 +5,9 @@
 //  Created by Nikhil Hore on 18/06/25.
 //
 
+import SwiftData
 import Testing
+
 @testable import LandmarkStoryteller
 
 struct LandmarkStorytellerTests {
