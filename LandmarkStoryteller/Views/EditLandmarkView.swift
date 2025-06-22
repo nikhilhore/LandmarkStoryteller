@@ -30,42 +30,47 @@ struct EditLandmarkView: View {
     }
 
     var body: some View {
-        NavigationView {
-            Form {
-                LabeledContent("Name") {
-                    TextField("Landmark Name", text: $name)
-                }
-                .labeledContentStyle(.topAligned)
-                LabeledContent("Location") {
-                    TextField("Latitude", text: $latitude)
-                        .keyboardType(.decimalPad)
-                    TextField("Longitude", text: $longitude)
-                        .keyboardType(.decimalPad)
-                }
-                .labeledContentStyle(.topAligned)
-                LabeledContent("Description") {
-                    TextEditor(text: $description)
-                        .frame(minHeight: 100)  // Give more room for description
-                        .border(Color.secondary.opacity(0.2))
-                        .padding(.bottom, 8)
-                }
-                .labeledContentStyle(.topAligned)
-                LabeledContent("Founding Date (Optional)") {
-                    DatePicker(
-                        "",
-                        selection: $foundingDate,
-                        displayedComponents: .date
-                    )
-                    .datePickerStyle(.compact)
-                    .padding(.vertical, 4)
-                    .labelsHidden()
-                }
-                .labeledContentStyle(.leading)
+        Form {
+            LabeledContent("Name") {
+                TextField("Landmark Name", text: $name)
             }
+            .labeledContentStyle(.topAligned)
+            LabeledContent("Location") {
+                TextField("Latitude", text: $latitude)
+                    .keyboardType(.decimalPad)
+                TextField("Longitude", text: $longitude)
+                    .keyboardType(.decimalPad)
+            }
+            .labeledContentStyle(.topAligned)
+            LabeledContent("Description") {
+                TextEditor(text: $description)
+                    .frame(minHeight: 150)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 4)
+                            .stroke(Color.secondary.opacity(0.2))
+                    )
+                    .padding(.bottom, 4)
+            }
+            .labeledContentStyle(.topAligned)
+            LabeledContent("Founding Date (Optional)") {
+                DatePicker(
+                    "",
+                    selection: $foundingDate,
+                    displayedComponents: .date
+                )
+                .datePickerStyle(.compact)
+                .padding(.vertical, 4)
+                .labelsHidden()
+            }
+            .labeledContentStyle(.leading)
         }
         .navigationTitle("Edit Landmark")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(true)
         .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel") { dismiss() }
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") { saveLandmark() }
                     .disabled(
@@ -94,7 +99,7 @@ struct EditLandmarkView: View {
 }
 
 #Preview {
-    NavigationView {
+    NavigationStack {
         EditLandmarkView(landmark: MockData.mockLandmark)
     }
     .modelContainer(for: Landmark.self, inMemory: true)

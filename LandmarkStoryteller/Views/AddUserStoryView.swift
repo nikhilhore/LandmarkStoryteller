@@ -23,42 +23,51 @@ struct AddUserStoryView: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack {
-                Text("New Story for \(landmark.name)")
-                    .font(.headline)
-                    .padding()
-                Form {
-                    LabeledContent("Title") {
-                        TextField("Story Title", text: $title)
-                    }
-                    .labeledContentStyle(.topAligned)
-                    TextEditor(text: $content)
-                        .frame(minHeight: 100)
-                        .border(Color.secondary.opacity(0.2))
-                        .padding(.vertical, 8)
+        NavigationStack {
+            Form {
+                LabeledContent("Title") {
+                    TextField("Story Title", text: $title)
                 }
+                .labeledContentStyle(.topAligned)
+                LabeledContent("Content") {
+                    TextEditor(text: $content)
+                        .frame(minHeight: 150)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color.secondary.opacity(0.2))
+                        )
+                        .padding(.bottom, 4)
+                }
+                .labeledContentStyle(.topAligned)
             }
+            .navigationTitle("New Story for \(landmark.name)")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let newStory = UserStory(
-                            title: title,
-                            content: content,
-                            dateAdded: Date()
-                        )
-                        // Add the new story to the landmark's relationship
-                        landmark.userStories?.append(newStory)
-                        // The modelContext will automatically save due to the @Bindable update
-                        dismiss()
-                    }
-                    .disabled(title.isEmpty || content.isEmpty)
+                    Button("Save") { saveUserStory() }
+                        .disabled(title.isEmpty || content.isEmpty)
                 }
             }
         }
+    }
+
+    private func saveUserStory() {
+        let newStory = UserStory(
+            title: title,
+            content: content,
+            dateAdded: Date()
+        )
+        // Add the new story to the landmark's relationship
+        if landmark.userStories != nil {
+            landmark.userStories?.append(newStory)
+        } else {
+            landmark.userStories = [newStory]
+        }
+        // The modelContext will automatically save due to the @Bindable update
+        dismiss()
     }
 }
 

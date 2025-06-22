@@ -13,6 +13,7 @@ struct LandmarkDetailView: View {
     let landmark: Landmark  // This view receives a Landmark object
     private let landmarkCoordinates: CLLocationCoordinate2D
 
+    @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
     @State private var position: MapCameraPosition
@@ -38,11 +39,7 @@ struct LandmarkDetailView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 15) {
-                Text(landmark.name)
-                    .font(.largeTitle)
-                    .fontWeight(.bold)
-                    .padding(.bottom, 8)
+            VStack(alignment: .leading, spacing: 16) {
 
                 // Optional: Display founding date if available
                 if let foundingDate = landmark.foundingDate {
@@ -51,29 +48,31 @@ struct LandmarkDetailView: View {
                     )
                     .font(.subheadline)
                     .foregroundStyle(.gray)
+                    Divider()
                 }
 
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Description:")
+                        .font(.headline)
+                    Text(landmark.description_)
+                        .font(.body)
+                }
                 Divider()
-                Text("Description:")
-                    .font(.headline)
-                Text(landmark.description_)
-                    .font(.body)
-                    .padding(.bottom, 8)
-                Divider()
-                Text("Location:")
-                    .font(.headline)
-                Text(
-                    "Latitude:: \(landmark.latitude, format: .number.precision(.fractionLength(4)))"
-                )
-                Text(
-                    "Longitude: \(landmark.longitude, format: .number.precision(.fractionLength(4)))"
-                )
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Location:")
+                        .font(.headline)
+                    Text(
+                        "Latitude: \(landmark.latitude, format: .number.precision(.fractionLength(4)))"
+                    )
+                    Text(
+                        "Longitude: \(landmark.longitude, format: .number.precision(.fractionLength(4)))"
+                    )
+                }
                 Map(position: $position) {
                     Marker(landmark.name, coordinate: landmarkCoordinates)
                 }
                 .frame(height: 250)
                 .cornerRadius(10)
-                .padding(.vertical)
                 Divider()
 
                 // Mark: - User Stories section
@@ -85,11 +84,11 @@ struct LandmarkDetailView: View {
                         isAddingStory = true
                     }
                 }
-                .padding(.bottom, 8)
                 UserStoriesView(landmark: landmark)
                 Spacer()
             }
             .padding()
+            .navigationTitle(landmark.name)
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -111,7 +110,7 @@ struct LandmarkDetailView: View {
     let landmark = MockData.mockLandmark
     landmark.userStories?.append(contentsOf: MockData.mockUserStories)
 
-    return NavigationView {  // Wrap in NavigationView for preview to show title
+    return NavigationStack {
         LandmarkDetailView(landmark: landmark)
     }
     .modelContainer(for: [Landmark.self, UserStory.self], inMemory: true)

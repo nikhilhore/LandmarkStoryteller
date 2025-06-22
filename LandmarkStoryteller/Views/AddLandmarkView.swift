@@ -18,7 +18,7 @@ struct AddLandmarkView: View {
     @State private var description: String = ""
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             Form {
                 LabeledContent("Name") {
                     TextField("Landmark Name", text: $name)
@@ -33,9 +33,12 @@ struct AddLandmarkView: View {
                 .labeledContentStyle(.topAligned)
                 LabeledContent("Description") {
                     TextEditor(text: $description)
-                        .frame(minHeight: 100)  // Give more room for description
-                        .border(Color.secondary.opacity(0.2))
-                        .padding(.bottom, 8)
+                        .frame(minHeight: 150)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color.secondary.opacity(0.2))
+                        )
+                        .padding(.bottom, 4)
                 }
                 .labeledContentStyle(.topAligned)
             }
@@ -49,7 +52,7 @@ struct AddLandmarkView: View {
                     Button("Save") { saveLandmark() }
                         .disabled(
                             name.isEmpty || latitude.isEmpty
-                                || longitude.isEmpty
+                                || longitude.isEmpty || description.isEmpty
                         )
                 }
             }
@@ -76,8 +79,6 @@ struct AddLandmarkView: View {
 }
 
 #Preview {
-    NavigationView {
-        AddLandmarkView()
-    }
-    .modelContainer(for: Landmark.self, inMemory: true)
+    AddLandmarkView()
+        .modelContainer(for: Landmark.self, inMemory: true)
 }

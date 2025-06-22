@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct UserStoriesView: View {
-    let landmark: Landmark
+    @Bindable var landmark: Landmark
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {

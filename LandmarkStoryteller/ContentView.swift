@@ -17,7 +17,7 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            NavigationView {
+            NavigationStack {
                 List {
                     ForEach(landmarks) { landmark in
                         NavigationLink(
@@ -37,15 +37,15 @@ struct ContentView: View {
                 }
                 .navigationTitle("Landmarks")
                 .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        EditButton()
+                    }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             isAddingLandmark = true
                         } label: {
                             Label("Add Landmark", systemImage: "plus")
                         }
-                    }
-                    ToolbarItem(placement: .topBarLeading) {
-                        EditButton()
                     }
                 }
                 .sheet(isPresented: $isAddingLandmark) {
